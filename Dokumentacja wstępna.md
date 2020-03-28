@@ -1,4 +1,5 @@
 # MOW Projekt
+
 ## Dokumentacja Wstępna 
 ### Detekcja anomalii w szeregach czasowych na danych giełdowych 
 
