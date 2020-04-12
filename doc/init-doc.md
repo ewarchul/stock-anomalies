@@ -42,14 +42,39 @@ bibliography: biblio.bib
 
   W ramach realizacji projektu użyte zostaną łącznie 3 zbiory danych, na które składają się przebiegi kursów instrumentów finansowych. Dwa z nich będą pochodzić z rzeczywistych rynków finansowych, a jeden z rynku wirtualnego. 
   Motywacją takiego podejścia jest chęć zaobserwowania zachowania się rynku w świecie, w którym na wartość kursu wpływa bardzo duża liczba czynników jawnych lub niejawnych, oraz w świecie, w którym zbiór możliwych akcji podejmowanych przez aktorów jest znacząco ograniczony oraz sam świat ma raczej charakter statyczny i iteracyjny.
+  Ponadto dodatkową motywacją za skorzystaniem z danych pochodzących z rynku wirtualnego jest łatwość określenia zdarzeń, które powoduję nagłe zmiany przebiegu kursu -- co zostanie bardziej szczegółowo opisane w podsekcji poświęconej temu rynkowi. 
 
 
 ## Rynki rzeczywiste
-   
+
+  W skład danych pochodzących z rynków rzeczywistych wchodzić będą dwie wielkości:
+  
+  * indeks giełdowy WIG20
+  * kurs akcji firmy CDR.
+
 
 ## Rynki wirtualne
 
-# Model detekcji anomalii 
+# Zadanie detekcji anomalii 
+
+  W rozdziale tym zostanie zdefiniowany w ogólny sposób problem detekcji anomalii w szeregach czasowych. Konkretyzacja ogólnych pojęć zdefiniowanych poniżej zostanie przedstawiona w rozdziale dotyczącym algorytmów detekcji.
+
+  Przez zadanie detekcji anomalii w trakcie realizacji projektu będziemy rozumieć następujący problem:
+  niech $(X_{i})_{i \in T}$ będzie procesem stochastycznym określonym na pewnej przestrzeni probabilistycznej, a zbiór indeksów $T$ będzie interpretowany jako zbiór chwil czasowych jednakowo odległych od siebie.
+  Realizację tego procesu, tj. uporządkowany zbiór $\{x{_t}\}_{t = 1, \dots, N}$, będziemy nazywać szeregiem czasowym. Nie zakładamy ponadto niczego względem stacjonarności tego szeregu lub rozkładu prawdopodobieństwa, z którego jest on generowany poza faktem, że jego nośnikiem jest zbiór liczb
+  rzeczywistych $\mathcal{R}$.
+
+  Anomalią w szeregu czasowym będziemy nazywali punkt w tym szeregu  $x_{k}$, który według przyjętego kryterium _odstaje_ od pozostałych punktów w najbliższym sąsiedztwie $x_{k - s}, \dots, x_{k + s}$ (anomalia lokalna) lub względem wszystkich punktów w szeregu (anomalia globalna). 
+  Kryterium _odstawania_ jest silnie zależne od kontekstu i procedury detekcji anomalii. Często przyjmowane kryterium wygląda następująco [@ad_review]:
+  
+  $|x_t - s(\{X_{t}\})| > \tau$
+
+  przy czym $s(\{X_{t}\})$ jest pewną statystyką. 
+
+  Detekcją anomalii będziemy nazywali procedurę, pozwalającą wykryć w szeregu czasowym zbiór indeksów punktów uznawanych za anomalię:
+
+  $AD\colon \{X_{t}\} \rightarrow T_{A} sub T$.
+
 
 # Algorytmy detekcji anomalii
 
@@ -59,9 +84,14 @@ bibliography: biblio.bib
 
 ## Metody spektralne
 
+# Charakterystyka zbiorów danych
+
 # Plan badań
 
-# Źródła danych
+## Eksperymenty i ich cel
+
+## Audyt modeli
+
 
 
 
