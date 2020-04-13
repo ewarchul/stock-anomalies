@@ -74,10 +74,6 @@ bibliography: biblio.bib
   [^1]: To samo tyczy się jakiejkolwiek innej waluty rzeczywistej.
  
 
-
-
-
-
 # Zadanie detekcji anomalii 
 
   W rozdziale tym zostanie zdefiniowany w ogólny sposób problem detekcji anomalii w szeregach czasowych. Konkretyzacja ogólnych pojęć zdefiniowanych poniżej zostanie przedstawiona w rozdziale dotyczącym algorytmów detekcji.
@@ -108,6 +104,27 @@ bibliography: biblio.bib
   
   W rozdziale tym zostaną opisane algorytmy służące do detekcji anomalii, które w ramach projektu zamierzamy zbadać. 
   Opis ten nie będzie zawierał dokładnego pseudokodu, a jedynie pewien formalizm matematyczny, który pozwala zobrazować idee stojące za omawianymi metodami. Ponadto wskazane i omówione zostaną parametry tych metod.
+
+  Omawiane metody 
+
+
+## MAD
+
+  Metoda _MAD_, tj. _median absolute deviation_ jest stosunkowo prostym sposobem detekcji anomalii opartym na oknie kroczącym (z ang. _moving window) o długości $k$. Dla każdego punktu metoda estymuje dwie rzeczy:
+
+  1. medianę w oknie 
+  2. bezwzględne odchylenie mediany.
+
+  Model można sformalizować w następujący sposób:
+
+  dla każdego punktu szeregu czasowego $x_{i}$ liczona jest wielkość
+  
+  $MAD_{i} = median_{i}[x_{i} - median_{j}(X_{j})]$.
+
+  Następnie każdy punkt szeregu czasowego porównywany jest z odpowiadającą mu wartość $MAD_{\star}$ -- jeśli wartość bezwzględna różnicy między tym punktem, a wartością $MAD$ jest większa od ustalonego progu, to punkt jest klasyfikowany jako anomalia. W nawiązaniu do rozdziału poprzedzającego [r3] podane tam kryterium w sposób ogólny konkretyzuje się do postaci:
+
+  $|x_{t} - MAD_{t}| > \tau$.
+
 
 ## STL-ESD
 
@@ -157,6 +174,12 @@ bibliography: biblio.bib
   W kontekście definicji procedury detekcji anomalii podanej [r3] należy wybrać z próby $i$ największych elementów i ich znaczniki umieścić w zbiorze $T_{A}$.
 
 
+## CAD k-NN
+
+  Metoda CAD k-NN (z ang. _Conformal Anomaly Detection k-Nearest Neighbours)
+
+
+
 
 ## Las izolacyjny
 
@@ -177,6 +200,8 @@ bibliography: biblio.bib
   Zbiory danych użyte do analizy działania algorytmów zostały częściowo omówione w rozdziale [r2]. 
   W niniejszym rozdziale zostaną wskazane źródła, z których pochodzą dane, oraz podana zostanie krótka charakterystyka tych danych.
 
+  Kompletna analiza statystyczna danych, na którą będzie składało się zbadanie rozkładu danych, autokorelacji szeregu czasowego lub jego innych właściwości jak stacjonarność zostanie umieszczona w dokumentacji końcowej.
+
 ## WIG20
 
   Historyczne dane `WIG20` dostępne są do pobrania ze strony [stooq.pl](https://stooq.pl/q/d/?s=wig20) z interwałem:
@@ -190,6 +215,9 @@ bibliography: biblio.bib
   Dane pobierane są w formacie `CSV` i nie zawierają wartości brakujących.
   Struktura zbioru danych przedstawiona jest na poniższym obrazku. 
 
+  
+
+  ![alt text](./images/wt-glimpse.png)
 
   Należy jednak zaznaczyć, że rozważaną w projekcie wartością szeregu czasowego jest uśredniona wartość indeksu z wartości otwarcia, zamknięcia oraz wartości najmniejszej i największej danej sesji.
 
@@ -205,10 +233,10 @@ bibliography: biblio.bib
   W związku z tym do badań zostanie użyty najdłuższy podciąg, w którym odstęp między danymi wynosi jedną dobę.
 
 
-  ## WoW Token
+## WoW Token
 
 
-  Historyczne kursy tokenu dostępne są na stronie [wowtokenprices.com](https://wowtokenprices.com/). Serwis udostępnia API, które umożliwia pobrania danych z kwantem 20-minutowym, które nie zawierają wartości brakujących, od początku istnienia tokena, tj. od roku 2015. 
+  Historyczne kursy tokena dostępne są na stronie [wowtokenprices.com](https://wowtokenprices.com/). Serwis udostępnia API, które umożliwia pobrania danych z kwantem 20-minutowym, które nie zawierają wartości brakujących, od początku istnienia tokena, tj. od roku 2015. 
   Kurs tokena różni się między regionami, w których znajdują się serwery. Dostępnych jest 5 regionów, tj. 
 
   1. europejski
@@ -220,13 +248,47 @@ bibliography: biblio.bib
   W ramach projektu interesujące będą tylko dane z regionu europejskiego.
 
   Struktura zbioru danych z ostatniego miesiąca widoczna jest na na poniższym obrazku. 
+
+  ![alt text](./images/wt-glimpse.png)
   
 
 # Plan badań
 
-## Eksperymenty i ich cel
+  Celem projektu jest zbadanie i porównanie metod detekcji anomalii w szeregach czasowych przy pomocy danych scharakteryzowanych we wcześniejszych rozdziałach.
 
-## Audyt modeli
+  Przyjęta metodologia zakłada, że zadanie detekcji anomalii zostanie potraktowane jak zadanie klasyfikacji binarnej. Oznacza to, że przykłady w zbiorze danych zostaną oznaczone flagą, która informuje o tym czy dany przykład jest anomalią czy też nie.
+
+  Przydział flagi będzie odbywał się na dwa sposoby:
+
+  1. autorzy manualnie wybiorą podzbiór zdarzeń, których zajście spowodowało znaczny przyrost lub spadek indeksu/wartości tokena i oznaczą je jako anomalie. Przykłady takich zdarzeń są następujące:
+    * kryzys gospodarczy z 2008 roku (ogłoszenie upadłości przez bank _Lehman Brothers_) (WIG20)
+    * rozpoczęcie stanu epidemicznego w Polsce w związku z pandemią koronawirusa SARS-CoV-2 (WIG20)
+    * atak Iranu na bazy wojskowe USA na początku 2020 roku (WIG20)
+    * zwiększenie współczynnika przyrostu zdobywanego doświadczenia o 100% (WoW Token)
+    * wydanie nowej części gry _World of Warcraft_ (WoW Token).
+
+  2. do zbiorów danych zostaną wprowadzone anomalie w sposób losowy.
+
+
+  Dzięki takiemu podejściu możliwe będzie porównanie metod detekcji w dość ogólnym kontekście (dane równie dobrze mogłyby być syntetycznie generowane) oraz sprawdzenie jak metody radzą sobie z wykrywaniem anomalii, które odpowiadają przełomowym zdarzeniom i mają odzwierciedlenie na rynkach.
+
+
+  Porównanie modeli odbędzie się przy pomocy trzech miar:
+
+  1. precyzji $P = \frac{S \cap G}{S}$
+  2. odzysku (z ang. _recall_) $R = \frac{S \cap G}{G}$
+  3. miary F-1 $F = 2\frac{PR}{P + R}$ będącej średnią harmoniczną $P$ i $R$
+
+
+  przy czym $S$ jest zbiorem poprawnie rozpoznanych anomalii, a $G$ jest zbiorem wszystkich anomalii w zbiorze danych.
+
+  Ponadto zbadane zostaną różne nastawy parametrów sterujących użytych metod jak:
+  
+  * sposób dokonywania dekompozycji sygnału w metodzie STL
+    * zastąpienie składowej trendu medianą [@adts-cloud]
+    * użycie różnych metod usunięcia szumu, tj. np. SMA oraz PEWMA
+  * wpływ szerokości okna na działanie metody MAD
+  * wpływ wielkości kolejki strojenia (_calibration queue), długości zbioru referencyjnego oraz parametru metody NN na działanie algorytmu CAD k-NN.
 
 
 
