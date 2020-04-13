@@ -174,6 +174,13 @@ bibliography: biblio.bib
   W kontekście definicji procedury detekcji anomalii podanej [r3] należy wybrać z próby $i$ największych elementów i ich znaczniki umieścić w zbiorze $T_{A}$.
 
 
+  Dekompozycja szeregu czasowego przez algorytm STL  znajduje się na poniższym obrazku.
+
+
+  ![alt text](./images/wig20-random.png)
+  
+
+
 ## CAD k-NN
 
   Metoda CAD k-NN (z ang. _Conformal Anomaly Detection k-Nearest Neighbours)
@@ -261,6 +268,7 @@ bibliography: biblio.bib
   Przydział flagi będzie odbywał się na dwa sposoby:
 
   1. autorzy manualnie wybiorą podzbiór zdarzeń, których zajście spowodowało znaczny przyrost lub spadek indeksu/wartości tokena i oznaczą je jako anomalie. Przykłady takich zdarzeń są następujące:
+
     * kryzys gospodarczy z 2008 roku (ogłoszenie upadłości przez bank _Lehman Brothers_) (WIG20)
     * rozpoczęcie stanu epidemicznego w Polsce w związku z pandemią koronawirusa SARS-CoV-2 (WIG20)
     * atak Iranu na bazy wojskowe USA na początku 2020 roku (WIG20)
