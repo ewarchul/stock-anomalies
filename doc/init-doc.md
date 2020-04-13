@@ -177,7 +177,7 @@ bibliography: biblio.bib
   Dekompozycja szeregu czasowego przez algorytm STL  znajduje się na poniższym obrazku.
 
 
-  ![alt text](./images/wig20-random.png)
+  ![alt text](./images/stl-usage.png)
   
 
 
