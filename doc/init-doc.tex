@@ -373,7 +373,7 @@ umieścić w zbiorze \(T_{A}\).
 Dekompozycja szeregu czasowego przez algorytm STL znajduje się na
 poniższym obrazku.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{./images/stl-usage.png}
 \caption{Dekompozycja szeregu czasowego metodą STL. Rysunek własny.}
@@ -395,7 +395,22 @@ Metoda ta ponadto utrzymuje w trakcie swojego działa dwa zbiory:
 
 \end{itemize}
 
-przy czym $t \geq m+n$. Znaczenie obu struktur i dokładne działanie algorytmu zostanie omówione w dokumetancji końcowej.
+przy czym $t \geq m+n$. \\
+W trakcie działania algorytmu każdemu przetwarzanemu punktowi $x_{t}$ przyporządkowywany jest punkt $\alpha_{t}$, który służy do wyliczenia
+p-wartości:
+\begin{equation*}
+  p(x_{t}, A_{t}) = \frac{1}{m + 1}|\{i = 1, \dots, m | \alpha_{t-i} \geq \alpha_{t}\}|.
+\end{equation*}
+
+Na jej podstawie przyznawany jest z kolei t.zw. \emph{conformal abnormality score}, tj. 
+
+\begin{equation*}
+  p(t)_{ab} = 1 - p(x_{t}, A_{t}) 
+\end{equation*}
+
+Punkt przyznany przetwarzanemu przykładowi umieszczany jest na czele kolejki $A_{t}$, a jej ogon jest zastępowany przez punkt ówcześnie poprzedzający go. 
+
+Pełniejsze znaczenie obu struktur i dokładne działanie algorytmu zostanie omówione w dokumetancji końcowej.
 
 
 \section{Charakterystyka zbioró wdanych \label{r5}}
