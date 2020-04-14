@@ -82,7 +82,7 @@ instrumentów finansowych}
   Przebieg kursów aktywów finansowych jak na przykład kursów akcji
   spółek lub indeksów giełdowych jest fundamentem działania inwestorów na
   rynkach. Jego zachowanie determinuje strategie oraz ryzyko inwestycyjne.
-  W związku z powyższym faktem kursy akcji są szczególnie interesujące nie
+  W związku z powyższym  kursy akcji są szczególnie interesujące nie
   tylko dla bezpośrednich aktorów rynkowych, ale również ekonomistów lub
   statystyków, którzy opracowują modele zachowań tych kursów lub rynków w
   ogólności. Współcześnie bardzo dużo uwagi poświęca się zagadnieniom
@@ -146,7 +146,7 @@ przez gracza może zostać wykorzystany w następujące sposoby:
 \begin{itemize}
 \item
   gracz może kupić token za rzeczywistą walutę (USD, GBP, EUR, TWD,
-  KRW), a następnie sprzedać go w umieszczonym w grze domu handlowym
+  KRW), a następnie sprzedać go w umieszczonym w grze domu aukcyjnym
   (\emph{Auction House})
 \item
   gracz może kupić token, płacąc fikcyjną walutą obowiązującą w świecie
@@ -233,7 +233,7 @@ Omawiane metody
 Metoda \emph{MAD}, tj. \emph{median absolute deviation} jest stosunkowo
 prostym sposobem detekcji anomalii opartym na oknie kroczącym (z ang.
 \emph{moving window}) o długości \(k\). Dla każdego punktu metoda estymuje
-dwie rzeczy:
+dwie wielkości:
 
 \begin{enumerate}
 \item
@@ -247,8 +247,10 @@ Model można sformalizować w następujący sposób:
 dla każdego punktu szeregu czasowego \(x_{i}\) liczona jest wielkość
 
 \begin{equation*}
-MAD_{i} = median_{i}[x_{i} - median_{j}(X_{j})].
+MAD_{i} = median_{i}[x_{i} - median_{j}(x_{j})].
 \end{equation*}
+
+przy czym $median_{j}(\star)$ jest medianą $j$-tego okna.
 
 Następnie każdy punkt szeregu czasowego porównywany jest z odpowiadającą
 mu wartość \(MAD_{\star}\) -- jeśli wartość bezwzględna różnicy między
@@ -277,7 +279,7 @@ gdzie \(x_{t}\) jest obserwowaną wartością szeregu czasowego,
 \(\tau_{t}\) jest składową trendu, \(s_{t}\) składową sezonowości, a
 \(r_{t}\) składową rezyduów. Dekompozycja taka jest dedykowana szeregom
 czasowym z zauważalnymi wolnozmiennymi fluktuacjami sezonowości oraz
-szybkozmiennymi zmianami składowej trendu \cite{wen-gao}. Zakłada się
+szybkozmienną składową trendu \cite{wen-gao}. Zakłada się
 ponadto, że składowa rezyduów zawiera całą pozostałą informację o
 szeregu czasowym -- m.in. szum. Można to sformalizować w następujący
 sposób:
@@ -298,16 +300,15 @@ składowa \(a_{t}\), a składowa:
 \begin{itemize}
 \item
   szumu \(\epsilon_{t}\) jest usuwana wskutek operacji filtracji (ang.
-  \emph{denoising}) przy pomocy średniej/medianie kroczącej lub
-  probabilistycznemu wygładzaniu eksponencjalnego (PEWMA) \cite{PEWMA},
-  co pozwala uzyskać sygnał postaci
+  \emph{denoising}) przy pomocy średniej/mediany kroczącej lub
+  probabilistycznemu wygładzaniu eksponencjalnego (PEWMA) \cite{PEWMA}
 \item
   trendu \(\tau_{t}\) jest usuwana wskutek operacji detrendyzacji, która
   w najprostszym wariancie sprowadza się do zastosowania operatora
   różnicowego \begin{equation*} \nabla x_{t} = x_{t} - x_{t -1} \end{equation*}
     lub do filtrów kroczących
 \item
-  sezonowości \(s_{t}\), która jest usuwana w standardowym standardzie
+  sezonowości \(s_{t}\), która jest usuwana w standardowej wersji
   metody STL przy pomocy LOESS (ang. \emph{locally estimated scatterplot
   smoothing}), tj. metody łączącej działanie średniej kroczącej z
   regresją wielomianową \cite{stl-origin}.
@@ -330,7 +331,7 @@ oraz trzy lub więcej parametrów sterujących detrendyzacją, usunięciem
 szumu oraz ekstrakcją sezonowości.
 
 Po otrzymaniu składowej \(a_{t}\) stosowany jest test statystyczny ESD
-(z ang. \_Extreme Studentized Deviate), w który służy do wykrycia
+(z ang. \_Extreme Studentized Deviate), który służy do wykrycia
 anomalii w próbie o rozkładzie \emph{asymptotycznie} normalnym. Jest on
 uogólnieniem testu Grubbs'a, w którym rozkład normalny próby jest
 warunkiem koniecznym. Test ESD rozważa dwie hipotezy
@@ -350,7 +351,7 @@ warunkiem koniecznym. Test ESD rozważa dwie hipotezy
 \(i\)-ta statystyka testowa ESD wyliczana jest w następujący sposób:
 
 \begin{equation*}
-T^{ESD}_{i} = \frac{\max_{i}|a_{i} - \bar a}{\sigma}
+T^{ESD}_{i} = \frac{\max_{i}|a_{i} - \bar a|}{\sigma}
 \end{equation*}
 
 gdzie \(\bar{a}\) oznacza średnią z próby, a \(\sigma\) odchylenie
@@ -378,11 +379,23 @@ poniższym obrazku.
 \caption{Dekompozycja szeregu czasowego metodą STL. Rysunek własny.}
 \end{figure}
 
-\hypertarget{cad-k-nn}{%
-\subsection{CAD k-NN}\label{cad-k-nn}}
+\subsection{LDCD}
 
-Metoda CAD k-NN (z ang. \_Conformal Anomaly Detection k-Nearest
-Neighbours)
+Metoda LDCD  (z ang. \emph{Lazy Drifting Conformal Detector}) \cite{knn} jest procedurą detekcji anomalii opartą
+na algorytmie $k$-NN, która nie czyni żadnych założeń odnośnie rozkładu szeregu czasowego i jego właściwości.
+
+Algorytm bazuje na kroczącym oknie historii o długości $l$, które zanurza (ang. \emph{embed}) szereg czasowy w przestrzeni $l$-wymiarowej.
+Operacja taka umożliwia zastosowanie metod wielowymiarowych do przyporządkowania punktom szeregu czasowego punktów niedopasowania (z ang. \emph{non-conformity score}) $\alpha_{t}$. Punkty te są przyznawane w oparciu o metodę $k$-NN. 
+Metoda ta ponadto utrzymuje w trakcie swojego działa dwa zbiory:
+
+\begin{itemize}
+
+  \item zbiór referencyjny $T_{t}$ o wielkości $n$
+  \item zbiór korekcyjny $A_{t}$ o wielkości $m$ 
+
+\end{itemize}
+
+przy czym $t \geq m+n$. Znaczenie obu struktur i dokładne działanie algorytmu zostanie omówione w dokumetancji końcowej.
 
 
 \section{Charakterystyka zbioró wdanych \label{r5}}
@@ -493,7 +506,7 @@ Przydział flagi będzie odbywał się na dwa sposoby:
 \def\labelenumi{\arabic{enumi}.}
 \item
   autorzy manualnie wybiorą podzbiór zdarzeń, których zajście
-  spowodowało znaczny przyrost lub spadek indeksu/wartości tokena i
+  spowodowało znaczny przyrost lub spadek wartości indeksu/tokena i
   oznaczą je jako anomalie. Przykłady takich zdarzeń są następujące:
 \end{enumerate}
 
@@ -516,7 +529,7 @@ Dzięki takiemu podejściu możliwe będzie porównanie metod detekcji w dość
 ogólnym kontekście (dane równie dobrze mogłyby być syntetycznie
 generowane) oraz sprawdzenie jak metody radzą sobie z wykrywaniem
 anomalii, które odpowiadają przełomowym zdarzeniom i mają
-odzwierciedlenie na rynkach.
+odzwierciedlenie na rynkach. Przyjęcie takiej metodologii podyktowane jest faktem, że w dostepnych zbiorach danych autorom nie udało się znaleźć zbioru poświęconemu aktywom giełdowym.
 
 Porównanie modeli odbędzie się przy pomocy trzech miar:
 
