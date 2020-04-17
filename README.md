@@ -2,7 +2,7 @@
 
 ## Overview
 
-Uni project which focuses on stock anomaly detection.
+Uni project which focuses on anomaly detection in time series. Data used are stock price data. 
 
 ## Requirements
 
