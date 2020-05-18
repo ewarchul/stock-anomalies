@@ -61,7 +61,7 @@ generate_pointAnomalies = function(data, col, indices, n, st_coeff) {
 #' @param length length of generated interval
 #' @param st_coeff control coefficient 
 
-generate_shiftAnomalies = function(data, col, index, length, st_coeff) {
+generate_intervalAnomalies = function(data, col, index, length, st_coeff) {
   val = 
     data %>% 
     purrr::pluck(col, index)
@@ -95,7 +95,7 @@ impute_randomPointAnomaly = function(data, col, n, st_coeff = 0.5) {
 #' @param length length of interval
 #' @param st_coeff control coefficient 
 
-impute_randomShiftAnomaly = function(data, col, length, st_coeff = 0.5) {
+impute_randomIntervalAnomaly = function(data, col, length, st_coeff = 0.5) {
   index = sample(1:(nrow(data) - length), 1)
   time_seq = 
     generate_timeSeq(data, index, length)
