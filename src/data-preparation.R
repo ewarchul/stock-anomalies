@@ -81,7 +81,7 @@ create_tsibble = function(dfx) {
 
 prepare_WoWToken = function(filename) {
   fn = 
-    read_json %.% json_to_df %.% create_tsibble
+    read_json %.% json_to_dfWoW %.% create_tsibble
   fn(filename)
 }
 
@@ -99,7 +99,7 @@ generate_df = function(dfx, key, pred) {
   key =
     rlang::enquo(key)
   dfx %>%
-    dplyr::mutate(label = dplyr::if_else(pred(!!key), 1, 0))
+    dplyr::mutate(label = dplyr::if_else(pred(!!key), TRUE, FALSE))
 }
 
 
