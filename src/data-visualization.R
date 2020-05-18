@@ -51,14 +51,17 @@ plot_ts = function(data, start_date = NA, end_date = NA,
       base_plot + 
       ggplot2::geom_hline(aes(yintercept = mean, color = "Średnia"), key_glyph = "rect", linetype = "dashed", alpha = 0.9)
   }
-  if(if_anomalies) {
+  if (if_anomalies) {
     anomalies = 
       dfx %>% 
         dplyr::filter(label)
-    base_plot = 
-      base_plot + 
-      ggplot2::geom_point(aes(x = time, y = price, color = "Anomalie"), shape = 5, key_glyph = "rect", data = anomalies) +
+    if (nrow(anomalies))
+      base_plot = 
+        base_plot + 
+        ggplot2::geom_point(aes(x = time, y = price, color = "Anomalie"), shape = 5, key_glyph = "rect", data = anomalies) +
       ggplot2::geom_vline(aes(xintercept = time), data = anomalies, color = "green", alpha = 0.15, size = 5)
+    else
+      base_plot
   }
   base_plot
 }
