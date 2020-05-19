@@ -13,7 +13,7 @@ library(magrittr)
 
 add_lag = function(data, key, win_size) {
   lags = 
-    1:w_size %>%
+    1:win_size %>%
     purrr::map(function(lag) {
       data %>%
         dplyr::transmute(
