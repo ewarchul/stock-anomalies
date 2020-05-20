@@ -1,4 +1,12 @@
 library(tidyverse)
 library(magrittr)
-library(mlr3)
+
+
+run_exp = function(models, tasks) {
+  list(models, tasks) %>%
+    purrr::pmap(function(model, task) {
+                  #' Todo
+
+  })
+}
 
