@@ -4,10 +4,10 @@ library(magrittr)
 #' Add lagged columns 
 #' 
 #' @description 
-#' todo
-#' @param data todo
-#' @param key todo 
-#' @param win_size  todo
+#' Proceses data table with moving window, adds columns containing samples laged by 1 sample, 2 samples ... to win_size-1 samples.  
+#' @param data table with data to be processed 
+#' @param key name of column to be processed with moving window
+#' @param win_size size of moving window 
 #'
 #' @examples todo
 
