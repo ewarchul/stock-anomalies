@@ -117,3 +117,23 @@ add_configAnomalies = function(dfx, filename) {
     dplyr::mutate(label = 
                     dplyr::if_else(time %in% labels, 1, 0))
 }
+
+#' Create time series tibble
+#' @description function cast data frame to tsibble data frame with specified key and index names, also calculates price 
+#' @param wig data frame with time series data
+
+c_tssibble = function(wig){
+    price <- (wig$Otwarcie + wig$Najwyzszy+ wig$Najnizszy + wig$Zamkniecie)/4
+    tsibble(price = price, date = wig$Data, key = date, index = price)
+    
+}
+#' Prepare stock (WIG20) data
+#' 
+#' @description function combines reading and casting function to create tsibble object with
+#' stock price data
+#' @param filename filename with WIG20 prices (CSV)
+prepare_Stock = function(filename) {
+  fn = 
+    read_csv %.% c_tssibble
+  fn(filename)
+}
