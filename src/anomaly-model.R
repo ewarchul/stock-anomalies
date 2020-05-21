@@ -148,15 +148,17 @@ ModelSVM = R6::R6Class("ModelSVM",
          train = function(data, ...) {
            self$model_state =
              self$model_struct(
-                   df = data,
-                   type='one-classification',
+                    
+                    df = data,
+                    type='one-classification',
+                    probability = TRUE,
                    ...
                  )
 
           },
          predict = function(data) {
           self$predict_state = 
-            predict(self$model_state, data)
+            predict(self$model_state, data, probability = TRUE)
          }
      )
 )
