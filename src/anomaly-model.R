@@ -127,11 +127,10 @@ ModelSVM = R6::R6Class("ModelSVM",
             self$param_set$gamma = controlParam(params, "gamma", 1) #default 1/data dimention 
             self$param_set$coef0 = controlParam(params, "coef0", 0)
             self$param_set$cost = controlParam(params, "cost", 1)
-            self$param_set$nu = controlParam(params, "nu", ????)
+            self$param_set$nu = controlParam(params, "nu", 0.5) 
             self$param_set$tolerance = controlParam(params, "tolerance", 0.001)
             self$param_set$epsilon = controlParam(params, "epsilon", 0.1)
             self$param_set$shrinking = controlParam(params, "shrinking", TRUE)
-#           degree, gamma, coef0 - brakuje
              
           self$model_struct = 
              purrr::partial(
@@ -152,6 +151,7 @@ ModelSVM = R6::R6Class("ModelSVM",
                     df = data,
                     type='one-classification',
                     probability = TRUE,
+                    na.action = na.omit,
                    ...
                  )
 
