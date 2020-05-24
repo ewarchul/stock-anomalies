@@ -3,7 +3,6 @@ library(yaml)
 library(magrittr)
 library(lambdass)
 library(lubridate)
-library(tsibble)
 library(jsonlite)
 library(here)
 
@@ -81,7 +80,7 @@ create_tibble = function(dfx) {
 
 prepare_WoWToken = function(filename) {
   fn = 
-    read_json %.% json_to_dfWoW %.% create_tsibble
+    read_json %.% json_to_dfWoW %.% create_tibble
   fn(filename)
 }
 
