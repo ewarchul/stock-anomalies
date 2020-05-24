@@ -1,0 +1,36 @@
+---
+title: "WIG20-data-anal"
+output: html_document
+---
+
+# WoW Token
+
+## Ogólna charakterystyka danych 
+
+### Typ, ilość, wartości brakujące w danych
+
+### Liczba anomalii prawdziwych 
+
+### Liczba anomalii imputowanych
+
+## Rozkład danych
+
+### Miary rozkładu
+
+### Normalność rozkładu
+
+## Charakterystyka szeregu
+
+### Przebieg danych
+
+### Sezonowość
+
+### Trend
+
+### Okresowość 
+
+### Indeks Hurst'a
+
+### Autokorelacja
+
+### Statystyki w oknach 

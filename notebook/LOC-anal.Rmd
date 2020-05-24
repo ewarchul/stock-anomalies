@@ -1,0 +1,51 @@
+---
+title: "LOC-anal"
+output: html_document
+---
+
+# LOC
+
+## Opis działania modelu 
+
+## Wykrycie anomalii rzeczywistych (eksperyment nr 1)
+
+### Opis eksperymentu 
+
+### Parametry modelu i eksperymentu
+
+### Wyniki eksperymentu
+
+- celność
+- odzysk
+- F-miara
+- krzywa ROC
+- określenie najlepszego modelu / ranking
+
+## Czułość modelu na anomalie punktowe (liczba anomalii i amplituda)
+
+### Opis eksperymentu
+
+### Parametry modelu i eksperymentu
+
+### Wyniki eksperymentu
+
+- celność
+- odzysk
+- F-miara
+- krzywa ROC
+- określenie najlepszego modelu / ranking
+
+## Czułość modelu na anomalie przedziałowe (długość przedzialu i amplituda)
+
+### Opis eksperymentu
+
+### Parametry modelu i eksperymentu
+
+### Wyniki eksperymentu
+
+- celność
+- odzysk
+- F-miara
+- krzywa ROC
+- określenie najlepszego modelu / ranking
+
