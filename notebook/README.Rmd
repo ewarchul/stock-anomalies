@@ -1,0 +1,87 @@
+---
+title: "README"
+output: html_document
+---
+
+# Essentials
+
+```{r echo=FALSE}
+source("../src/anomaly-task.R")
+source("../src/anomaly-model-LOF.R")
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+```
+
+# Tworzenie eksperymentu 
+
+## Wczytanie danych
+
+```{r}
+wow_data_eu = 
+  prepare_WoWToken("../data/wtoke-30d.json") %>%
+  dplyr::filter(region == "eu") %>%
+  generate_df(key = time)
+```
+```{r}
+wow_data_eu %>%
+  head
+```
+## Imputacja anomalii
+
+```{r}
+
+wow_anomalies = 
+  wow_data_eu %>% 
+  impute_randomPointAnomaly(col = "price", n = 10)
+```
+
+## Check
+
+```{r}
+
+wow_data_eu %>%
+  plot_ts()
+wow_anomalies %>%
+  plot_ts()
+```
+
+```{r}
+wow_anomalies %>% head
+```
+
+## Utworzenie zadania klasyfikacji
+
+```{r}
+wow_task = 
+  AnomalyTask$new(
+    id = "WoW-window-5",
+    data = wow_anomalies,
+    key = "price",
+    time = "time",
+    target = "label",
+    window_size = 5
+  )
+```
+
+
+## Utworzenie modelu 
+
+```{r}
+
+lof_k5 =
+  ModelLOF$new(list("k" = 5))
+
+lof_k5$predict(data = wow_task$df[6:2143,])
+
+```
+
+## Analiza wyniku
+
+```{r}
+tibble::tibble(
+  time = wow_task$time_sequence %>% dplyr::slice(6:2143) %>% dplyr::pull(),
+  labels = lof_k5$predict_state
+) %>%
+  ggplot2::ggplot(aes(x = time, y = labels)) + geom_point()
+```

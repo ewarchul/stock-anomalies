@@ -2,9 +2,8 @@ library(tidyverse)
 library(magrittr)
 library(R6)
 library(mlr)
-library(here)
-source(here::here("src", "utils-task.R"))
 
+source("./utils-task.R")
 
 #' @title Anomaly Detection Task
 #'

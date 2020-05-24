@@ -1,4 +1,4 @@
-source("anomaly-model.R")
+source(here::here("src", "anomaly-model.R"))
 
 ModelLOF = R6::R6Class("ModelLOF",
   inherit = Model,
@@ -11,7 +11,7 @@ ModelLOF = R6::R6Class("ModelLOF",
              
           self$model_struct = 
              purrr::partial(
-                DescTools::lof, 
+                DescTools::LOF, 
                 k = self$param_set$k
               )
          },
@@ -22,7 +22,7 @@ ModelLOF = R6::R6Class("ModelLOF",
           },
          predict = function(data) {
           self$predict_state = 
-            predict(self$model_state, data)
+            self$model_struct(data = data)
          },
          print = function() {
            super$print()

@@ -95,11 +95,15 @@ prepare_WoWToken = function(filename) {
 #' wow_data = prepare_WoWToken("wtoke-30d.json")
 #' wow_ds = generate_df(price, x %->% {x > mean(x)})
 
-generate_df = function(dfx, key, pred) { 
+generate_df = function(dfx, key, pred = NA) { 
   key =
     rlang::enquo(key)
-  dfx %>%
-    dplyr::mutate(label = dplyr::if_else(pred(!!key), TRUE, FALSE))
+  if (is.na(pred))
+    dfx %>% 
+      dplyr::mutate(label = FALSE)
+  else 
+    dfx %>%
+      dplyr::mutate(label = dplyr::if_else(pred(!!key), TRUE, FALSE))
 }
 
 
