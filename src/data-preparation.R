@@ -67,10 +67,10 @@ json_to_dfWoW = function(x) {
 #' @description function cast data frame to tsibble data frame with specified key and index names
 #' @param dfx data frame   
 
-create_tsibble = function(dfx) {
+create_tibble = function(dfx) {
   dfx %>% 
     dplyr::mutate(time = lubridate::as_datetime(time)) %>%
-    tsibble::as_tsibble(key = time, index = price) 
+    tibble::as_tibble(key = time, index = price) 
 }
 
 #' Prepare WoW data
