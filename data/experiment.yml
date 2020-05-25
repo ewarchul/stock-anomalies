@@ -1,6 +1,6 @@
 experiment_point_anomalies:
- data_source: "wig"
- data_path: "../data/wig20_d.csv"
+ data_source: "wow"
+ data_path: "../data/wtoke-30d.json"
  point_anomalies_number: 5
  interval_anomaly_length: 0
  amplitude: "small"
