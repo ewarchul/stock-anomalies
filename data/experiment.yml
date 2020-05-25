@@ -1,4 +1,8 @@
 experiment_point_anomalies:
- point_anomalies_number: 50
+ data_source: "wig"
+ data_path: "../data/wig20_d.csv"
+ point_anomalies_number: 5
  interval_anomaly_length: 0
  amplitude: "small"
+ task_id : "Wig-window-5"
+ window_size: 5
