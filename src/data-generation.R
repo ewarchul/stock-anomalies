@@ -99,9 +99,8 @@ impute_randomIntervalAnomaly = function(data, col, length, st_coeff = 0.5) {
   index = sample(1:(nrow(data) - length), 1)
   time_seq = 
     generate_timeSeq(data, index, length)
-  anomalies =  
-    data %>%
-      generate_shiftAnomalies(col, index, length, st_coeff) 
+  anomalies = data %>%
+                generate_intervalAnomalies(col, index, length, st_coeff) 
   data[[col]][data$time %in% time_seq] = anomalies
   data[["label"]][data$time %in% time_seq] = TRUE
   data
