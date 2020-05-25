@@ -126,8 +126,9 @@ add_configAnomalies = function(dfx, filename) {
 #' @param wig data frame with time series data
 
 c_tssibble = function(wig){
-    price <- (wig$Otwarcie + wig$Najwyzszy+ wig$Najnizszy + wig$Zamkniecie)/4
-    tsibble(price = price, date = wig$Data, key = date, index = price)
+    price = 
+      (wig$Otwarcie + wig$Najwyzszy + wig$Najnizszy + wig$Zamkniecie) / 4
+    tibble::tibble(price = price, date = wig$Data, key = date, index = price)
     
 }
 #' Prepare stock (WIG20) data
