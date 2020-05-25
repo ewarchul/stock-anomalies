@@ -26,8 +26,7 @@ AnomalyTask = R6::R6Class("AnomalyTask",
               add_lag(key, window_size)
            self$targets = 
              data %>%
-              dplyr::select(!!rlang::sym(target)) %>%
-              base::factor()
+              dplyr::select(!!rlang::sym(target)) 
            self$time_sequence =
              data %>%
               dplyr::select(!!rlang::sym(time))
