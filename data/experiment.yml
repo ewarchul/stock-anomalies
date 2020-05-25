@@ -6,3 +6,4 @@ experiment_point_anomalies:
  amplitude: "small"
  task_id : "Wig-window-5"
  window_size: 5
+
