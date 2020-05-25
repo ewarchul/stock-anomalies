@@ -1,9 +1,11 @@
 library(tidyverse)
+library(yaml)
 library(magrittr)
 library(R6)
 library(mlr)
 library(here)
 source(here::here("src", "utils-task.R"))
+source(here::here("src", "data-preparation.R"))
 
 
 #' @title Anomaly Detection Task
@@ -45,4 +47,23 @@ AnomalyTask = R6::R6Class("AnomalyTask",
     )
 )
 
-  
+AnomalyTaskConfig = R6::R6Class("AnomalyTaskConfig", 
+  inherit = AnomalyTask,
+  public = 
+    list(
+      initialize = function(config_path) {
+          config = read_yaml(config_path)
+          data = prepare_experiment_data(config_path = config_path)
+          super$initialize(
+              id = config$experiment_point_anomalies$task_id,
+              data = data,
+              key = "price",
+              time = "time",
+              target = "label",
+              window_size = config$experiment_point_anomalies$window_size
+              )
+          }
+      )
+)
+
+
