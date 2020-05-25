@@ -130,10 +130,11 @@ wig_tibble = function(data, lang = "pl") {
       dfx = 
       data %>%
         dplyr::rename(
+          Date = "Data",
           Open = "Otwarcie",
           Close = "Zamkniecie",
           High = "Najwyzszy",
-          Close = "Najnizszy")
+          Low = "Najnizszy")
     } else 
       dfx = data
     dfx %>% 
