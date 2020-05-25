@@ -125,11 +125,12 @@ add_configAnomalies = function(dfx, filename) {
 #' @description function cast data frame to tsibble data frame with specified key and index names, also calculates price 
 #' @param wig data frame with time series data
 
-c_tssibble = function(wig){
-    price = 
-      (wig$Otwarcie + wig$Najwyzszy + wig$Najnizszy + wig$Zamkniecie) / 4
-    tibble::tibble(price = price, date = wig$Data, key = date, index = price)
-    
+wig_tibble = function(data) {
+    data %>% 
+      dplyr::transmute(
+                    price = Open + High + Low + Close / 4,
+                    time = lubridate::as_datetime(Date)
+                    )
 }
 #' Prepare stock (WIG20) data
 #' 
@@ -138,6 +139,6 @@ c_tssibble = function(wig){
 #' @param filename filename with WIG20 prices (CSV)
 prepare_Stock = function(filename) {
   fn = 
-    read_csv %.% c_tssibble
+    read_csv %.% wig_tibble
   fn(filename)
 }
