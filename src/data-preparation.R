@@ -57,7 +57,8 @@ json_to_dfWoW = function(x) {
         x %>%
           purrr::pluck(realm) %>%
           purrr::map_df(data.frame) %>%
-          dplyr::mutate(region = realm)
+          dplyr::mutate(region = realm) %>%
+          dplyr::filter(region == "eu")
     })
 }
 

@@ -26,3 +26,28 @@ add_lag = function(data, key, win_size) {
   } else 
       data
 }
+
+
+prepare_experiment_data = function(config_path) {
+  config = read_yaml(config_path)
+  prep_func = ifelse(config$experiment_point_anomalies$data_source == "wow",
+                     prepare_WoWToken,
+                     prepare_Stock)
+  data = 
+    prep_func(config$experiment_point_anomalies$data_path) %>%
+    generate_df(key = time)
+
+  anomalie_number = config$experiment_point_anomalies$point_anomalies_number
+  anomalie_length = config$experiment_point_anomalies$interval_anomaly_length
+  anomalie_size = ifelse(config$experiment_point_anomalies$amplitude == "small", 0.2, 0.8)  
+  
+  if (anomalie_length > 0) {
+      data %>% 
+        impute_randomPointAnomaly(col = "price", n = anomalie_number, st_coeff = anomalie_size) %>%
+        impute_randomIntervalAnomaly(col = "price", length = anomalie_length, st_coeff = anomalie_size)
+  } else {
+      data %>% 
+        impute_randomPointAnomaly(col = "price", n = anomalie_number, st_coeff = anomalie_size) 
+  }
+}
+
