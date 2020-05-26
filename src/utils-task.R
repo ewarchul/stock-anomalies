@@ -18,7 +18,7 @@ add_lag = function(data, key, win_size) {
       purrr::map(function(lag) {
         data %>%
           dplyr::transmute(
-                        !!rlang::sym(paste(key, "lag", lag, sep = "_")) := dplyr::lag(!!rlang::sym(key), lag) 
+                        !!rlang::sym(paste(key, "lag", lag, sep = "_")) := dplyr::lag(!!rlang::sym(key), lag, default = first(!!rlang::sym(key))) 
                         )
       }) %>%
       purrr::reduce(dplyr::bind_cols)

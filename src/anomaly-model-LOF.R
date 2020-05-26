@@ -39,7 +39,6 @@ ModelLOF = R6::R6Class("ModelLOF",
          #' @param data data frame
 
         predict = function(data) {
-          data %<>% drop_na
           self$predict_state = 
             self$model_struct(data = data)
          },
