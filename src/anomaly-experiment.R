@@ -23,6 +23,7 @@ run_exp = function(models, task = NA, key) {
      furrr::future_map(function(model) {
         id = 
           paste("model", model$model_id, "task", task$task_id, sep = "-") 
+        model$train(task_data)
         predictions = 
           model$predict(task_data)
         vals = 
