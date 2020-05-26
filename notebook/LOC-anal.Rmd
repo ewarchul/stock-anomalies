@@ -52,7 +52,7 @@ k = config$experiment_point_anomalies$window_size
 # iforest = ModelIsoForest$new(list(ntrees = 100)) 
 
 k_vals = c(1, 2, 4, 6, 8, 10)
-print(k_vals)
+print("wartoci parametru k", k_vals)
 
 models = k_vals %>% purrr::map(function(k) { 
   ModelLOF$new(list("k" = k)) 
@@ -108,6 +108,7 @@ k = config$experiment_point_anomalies$window_size
 # iforest = ModelIsoForest$new(list(ntrees = 100)) 
 
 k_vals = c(1, 2, 4, 6, 8, 10)
+print("wartoci parametru k: ", k_vals)
 print(k_vals)
 
 models = k_vals %>% purrr::map(function(k) { 
