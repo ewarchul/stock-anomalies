@@ -1,51 +1,198 @@
 ---
-title: "LOC-anal"
+title: "LOF-Analisys"
 output: html_document
 ---
+# Analiza LOF
 
-# LOC
+```{r}
+source("../src/anomaly-task.R")
+source("../src/anomaly-model-LOF.R")
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+source("../src/utils-task.R")
+source("../src/anomaly-model-LOF.R")
+# source("../src/anomaly-model-STL.R")
+# source("../src/anomaly-model-SVM.R")
+# source("../src/anomaly-model-iForest.R")
+source("../src/anomaly-experiment.R")
+source("../src/utils-experiment.R")
+```
+
+
 
 ## Opis działania modelu 
-
-## Wykrycie anomalii rzeczywistych (eksperyment nr 1)
-
-### Opis eksperymentu 
-
-### Parametry modelu i eksperymentu
-
-### Wyniki eksperymentu
-
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+LOF jest nienadzorowaną metodą detekcji anomalii. Dla każdego punktu wylicza ona lrd (z ang. local reachability density) w odniesianiu do punktów z jego sąsiedztwa. Za anomalię uznawany jest punkt, którego zasięg jest znacznie mniejszy od zasięgów punktów sąsiedztwa.
 
 ## Czułość modelu na anomalie punktowe (liczba anomalii i amplituda)
 
+
 ### Opis eksperymentu
 
+```{r}
+config_path = "../data/point_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
+
 ### Parametry modelu i eksperymentu
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+# lof = ModelLOF$new(list("k" = k))  
+# stl = ModelSTL$new() 
+# svm = ModelSVM$new() 
+# iforest = ModelIsoForest$new(list(ntrees = 100)) 
+
+k_vals = c(1, 2, 4, 6, 8, 10)
+print(k_vals)
+
+models = k_vals %>% purrr::map(function(k) { 
+  ModelLOF$new(list("k" = k)) 
+})
+
+experiment = run_exp(models, wow_task, "price")
+
+tresh = 1.5
+experiment_tr1.5 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.3
+experiment_tr1.3 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.7
+experiment_tr1.7 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
 
 ### Wyniki eksperymentu
+```{r}
+metrics_tr1.3 = compute_metrics(experiment_tr1.3)
+print(metrics_tr1.3)
+metrics_tr1.5 = compute_metrics(experiment_tr1.5)
+print(metrics_tr1.5)
+metrics_tr1.7 = compute_metrics(experiment_tr1.7)
+print(metrics_tr1.7)
 
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
-
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
 ## Czułość modelu na anomalie przedziałowe (długość przedzialu i amplituda)
 
-### Opis eksperymentu
+### Opis eksperymentu 
+```{r}
+config_path = "../data/interval_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
 
 ### Parametry modelu i eksperymentu
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+# lof = ModelLOF$new(list("k" = k))  
+# stl = ModelSTL$new() 
+# svm = ModelSVM$new() 
+# iforest = ModelIsoForest$new(list(ntrees = 100)) 
+
+k_vals = c(1, 2, 4, 6, 8, 10)
+print(k_vals)
+
+models = k_vals %>% purrr::map(function(k) { 
+  ModelLOF$new(list("k" = k)) 
+})
+
+experiment = run_exp(models, wow_task, "price")
+
+tresh = 1.5
+experiment_tr1.5 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.3
+experiment_tr1.3 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.7
+experiment_tr1.7 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
 
 ### Wyniki eksperymentu
+```{r}
+metrics_tr1.3 = compute_metrics(experiment_tr1.3)
+print(metrics_tr1.3)
+metrics_tr1.5 = compute_metrics(experiment_tr1.5)
+print(metrics_tr1.5)
+metrics_tr1.7 = compute_metrics(experiment_tr1.7)
+print(metrics_tr1.7)
 
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
 
+
+## Wykrycie anomalii rzeczywistych 
+
+### Opis eksperymentu 
+```{r}
+config_path = "../data/natural_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
+
+### Parametry modelu i eksperymentu
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+# lof = ModelLOF$new(list("k" = k))  
+# stl = ModelSTL$new() 
+# svm = ModelSVM$new() 
+# iforest = ModelIsoForest$new(list(ntrees = 100)) 
+
+k_vals = c(1, 2, 4, 6, 8, 10)
+print(k_vals)
+
+models = k_vals %>% purrr::map(function(k) { 
+  ModelLOF$new(list("k" = k)) 
+})
+
+experiment = run_exp(models, wow_task, "price")
+
+tresh = 1.5
+experiment_tr1.5 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.3
+experiment_tr1.3 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1.7
+experiment_tr1.7 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr1.3 = compute_metrics(experiment_tr1.3)
+print(metrics_tr1.3)
+metrics_tr1.5 = compute_metrics(experiment_tr1.5)
+print(metrics_tr1.5)
+metrics_tr1.7 = compute_metrics(experiment_tr1.7)
+print(metrics_tr1.7)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
