@@ -25,11 +25,15 @@ transform_scores = function(results, scores, pred) {
 #' @description
 #' function computes data necessary to plot ROC curve.
 #' @param experiment result
+#' @param predictions column name with predictions [String]
+#' @param truth column name with true labels [String]
 
-get_ROC = function(result) { 
+get_ROC = function(result, predictions, truth) { 
+  predictions %<>% rlang::sym()
+  truth %<>% rlang::sym()
   roc_df = 
     result %>%
-      pROC::roc(labels, pred_labels)
+      pROC::roc(!!truth, !!predictions)
   tibble::tibble(
       sens = roc_df$sensitivities,
       spec = roc_df$specificities
