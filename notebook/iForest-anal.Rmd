@@ -5,47 +5,569 @@ output: html_document
 
 # iForest
 
+---
+title: "Isolation-Forest-Analisys"
+output: html_document
+---
+# Analiza Lasu Izolacyjnego
+```{r}
+library(here)
+source("../src/anomaly-task.R")
+source("../src/anomaly-model-LOF.R")
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+source("../src/utils-task.R")
+source(here::here("src", "anomaly-model-iForest.R"))
+source("../src/anomaly-experiment.R")
+source("../src/utils-experiment.R")
+```
+
 ## Opis działania modelu 
-
-## Wykrycie anomalii rzeczywistych (eksperyment nr 1)
-
-### Opis eksperymentu 
-
-### Parametry modelu i eksperymentu
-
-### Wyniki eksperymentu
-
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+Algorytm ten wybiera losową wartość podziału w przedziale między maksymalną a minimalną wartością cechy. w ten sposób dzielony jest cały zakres wartości cechy. W efekcie powstaje drzewo binarne w którym, ilość podziałów wymagana do wyizolowania próbki jest równa odległości od liścia do korzenia. Funkcją decyzyjną jest ta odległość, uśredniona względem drzew lasu. Jest ona miarą czy dana próbka jest anomalią czy nie.
 
 ## Czułość modelu na anomalie punktowe (liczba anomalii i amplituda)
 
 ### Opis eksperymentu
 
-### Parametry modelu i eksperymentu
+```{r}
+config_path = "../data/point_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
+
+### Liczba drzew 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+ntree_vals = c(1, 50, 100, 300, 500, 800)
+print("wartoci parametru ntree:" )
+print(ntree_vals)
+
+models = ntree_vals %>% purrr::map(function(ntree) {
+  ModelIsoForest$new(list("ntree" = ntree))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
 
 ### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
 
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+### prawdopodobieństwo podziału według atrybutu dającego największą średnia zdobycz informacyjną 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_avg_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_avg_gain:" )
+print(prob_pick_avg_gain_vals)
+
+models = prob_pick_avg_gain_vals %>% purrr::map(function(prob_pick_avg_gain) {
+  ModelIsoForest$new(list("prob_pick_avg_gain" = prob_pick_avg_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+
+### prawdopodobieństwo podziału według atrybutu dającego największą laczna zdobycz informacyjną  
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_pooled_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_pooled_gain:" )
+print(prob_pick_pooled_gain_vals)
+
+models = prob_pick_pooled_gain_vals %>% purrr::map(function(prob_pick_pooled_gain) {
+  ModelIsoForest$new(list("prob_pick_pooled_gain" = prob_pick_pooled_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+### minimalna zdobycz informacyjna aby kontynuowac podzialy
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+min_gain_vals = c(0, 0.1, 0.2, 0.4, 0.6, 0.8)
+print("wartoci parametru min_gain:" )
+print(min_gain_vals)
+
+models = min_gain_vals %>% purrr::map(function(min_gain) {
+  ModelIsoForest$new(list("min_gain" = min_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
 
 ## Czułość modelu na anomalie przedziałowe (długość przedzialu i amplituda)
 
-### Opis eksperymentu
 
-### Parametry modelu i eksperymentu
+```{r}
+config_path = "../data/interval_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
+
+### Liczba drzew 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+ntree_vals = c(1, 50, 100, 300, 500, 800)
+print("wartoci parametru ntree:" )
+print(ntree_vals)
+
+models = ntree_vals %>% purrr::map(function(ntree) {
+  ModelIsoForest$new(list("ntree" = ntree))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+### prawdopodobieństwo podziału według atrybutu dającego największą średnia zdobycz informacyjną 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_avg_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_avg_gain:" )
+print(prob_pick_avg_gain_vals)
+
+models = prob_pick_avg_gain_vals %>% purrr::map(function(prob_pick_avg_gain) {
+  ModelIsoForest$new(list("prob_pick_avg_gain" = prob_pick_avg_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+
+### prawdopodobieństwo podziału według atrybutu dającego największą laczna zdobycz informacyjną  
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_pooled_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_pooled_gain:" )
+print(prob_pick_pooled_gain_vals)
+
+models = prob_pick_pooled_gain_vals %>% purrr::map(function(prob_pick_pooled_gain) {
+  ModelIsoForest$new(list("prob_pick_pooled_gain" = prob_pick_pooled_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+### minimalna zdobycz informacyjna aby kontynuowac podzialy
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+min_gain_vals = c(0, 0.1, 0.2, 0.4, 0.6, 0.8)
+print("wartoci parametru min_gain:" )
+print(min_gain_vals)
+
+models = min_gain_vals %>% purrr::map(function(min_gain) {
+  ModelIsoForest$new(list("min_gain" = min_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
 
 ### Wyniki eksperymentu
 
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+```{r}
+config_path = "../data/natural_anomalies_wow.yml" 
+config = read_yaml(config_path)
+print(config)
+```
 
+### Testowanie na anomaliach rzeczywistych (długość przedzialu i amplituda)
+
+```{r}
+wow_data = prepare_experiment_data(config_path)
+wow_data %>% head
+plot_ts(wow_data)
+wow_task = AnomalyTaskConfig$new(config_path)
+```
+
+### Liczba drzew 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+ntree_vals = c(1, 50, 100, 300, 500, 800)
+print("wartoci parametru ntree:" )
+print(ntree_vals)
+
+models = ntree_vals %>% purrr::map(function(ntree) {
+  ModelIsoForest$new(list("ntree" = ntree))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+### prawdopodobieństwo podziału według atrybutu dającego największą średnia zdobycz informacyjną 
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_avg_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_avg_gain:" )
+print(prob_pick_avg_gain_vals)
+
+models = prob_pick_avg_gain_vals %>% purrr::map(function(prob_pick_avg_gain) {
+  ModelIsoForest$new(list("prob_pick_avg_gain" = prob_pick_avg_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+
+### prawdopodobieństwo podziału według atrybutu dającego największą laczna zdobycz informacyjną  
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+prob_pick_pooled_gain_vals = c(0, 0.2, 0.4, 0.6, 0.8, 1)
+print("wartoci parametru prob_pick_pooled_gain:" )
+print(prob_pick_pooled_gain_vals)
+
+models = prob_pick_pooled_gain_vals %>% purrr::map(function(prob_pick_pooled_gain) {
+  ModelIsoForest$new(list("prob_pick_pooled_gain" = prob_pick_pooled_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
+
+### minimalna zdobycz informacyjna aby kontynuowac podzialy
+
+```{r}
+k = config$experiment_point_anomalies$window_size
+
+
+min_gain_vals = c(0, 0.1, 0.2, 0.4, 0.6, 0.8)
+print("wartoci parametru min_gain:" )
+print(min_gain_vals)
+
+models = min_gain_vals %>% purrr::map(function(min_gain) {
+  ModelIsoForest$new(list("min_gain" = min_gain))
+})
+
+experiment = run_exp(models, wow_task, "price")
+```
+
+```{r}
+tresh = 0.4
+experiment_tr0.4 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 0.8
+experiment_tr0.8 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+
+tresh = 1
+experiment_tr1 = experiment %>% transform_scores("predictions", f.(x, x > tresh))
+```
+
+### Wyniki eksperymentu
+```{r}
+metrics_tr0.4 = compute_metrics(experiment_tr0.4)
+print(metrics_tr1.3)
+metrics_tr0.8 = compute_metrics(experiment_tr0.8)
+print(metrics_tr0.8)
+metrics_tr1 = compute_metrics(experiment_tr1)
+print(metrics_tr1)
+
+#roc jest zepsute
+# ROC = get_ROC(experiment)
+```
