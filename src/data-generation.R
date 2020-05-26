@@ -53,7 +53,8 @@ generate_pointAnomalies = function(data, col, indices, n, st_coeff) {
 
 #' Interval anomalies generator
 #'
-#' @description helper function generates anomalies in randomly choosen interval of
+#' @description 
+#' function generates anomalies in randomly choosen interval of
 #' given time series.
 #' @param data data frame with time series
 #' @param col column with value of time serie
@@ -91,7 +92,7 @@ impute_randomPointAnomaly = function(data, col, n, st_coeff = 0.5) {
 #' Impute interval with anomalies into TS
 #'
 #' @description function puts interval anomalies into data frame with TS
-#' @param col column with value of time serie
+#' @param col column with value of time serie [String]
 #' @param length length of interval
 #' @param st_coeff control coefficient 
 
@@ -103,5 +104,21 @@ impute_randomIntervalAnomaly = function(data, col, length, st_coeff = 0.5) {
                 generate_intervalAnomalies(col, index, length, st_coeff) 
   data[[col]][data$time %in% time_seq] = anomalies
   data[["label"]][data$time %in% time_seq] = TRUE
+  data
+}
+
+#' Impute intervals with anomalies into TS
+#'
+#' @description function puts intervals anomalies into data frame with TS
+#' @param n number of intervals
+#' @param col column with value of time serie [String]
+#' @param length length of interval
+#' @param st_coeff control coefficient 
+
+
+impute_randomIntervalsAnomaly = function(data, n, col, length, st_coeff = 0.5) {
+  for (it in 1:n)
+    data %<>%
+      impute_randomIntervalAnomaly(col = col, length = length, st_coeff)
   data
 }

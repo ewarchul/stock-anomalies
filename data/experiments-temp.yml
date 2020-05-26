@@ -1,0 +1,10 @@
+experiment_1:
+ data_source: "wig"
+ data_path: "../data/wig-data.csv"
+ point_anomalies_pct: 0 
+ interval_anomaly_length: 0
+ interval_anomaly_amount: 1
+ amplitude: 0.2
+ task_id : "Wig-natural"
+ window_size: 5
+
