@@ -1,12 +1,19 @@
 library(tidyverse)
-library(data.table)
 library(magrittr)
 library(furrr)
-library(pROC)
-library(caret)
 
-
-#' [Model] -> Task -> [Tibble]
+#' Run experiment
+#'
+#' @description 
+#' Function evaluate list of models [AnomalyModel] on given task [Task].
+#' @param models list of models [AnomalyModel]
+#' @param task AnomalyModel type instance
+#' @param key name of variable representing data in TS
+#'
+#' @return list of data frames
+#' @examples
+#' results = 
+#'  run_exp(list(ModelLOF$new(...), ModelSVM$new(...), task_1, "price")
 
 run_exp = function(models, task = NA, key) {
    task_data = task$df

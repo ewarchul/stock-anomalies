@@ -27,6 +27,13 @@ add_lag = function(data, key, win_size) {
       data
 }
 
+#' Map config to data frame 
+#'
+#' @description 
+#' function reads YAML config with experiment information 
+#' and create data frame which is used in further steps 
+#' to create object of class [AnomalyTaskConfig].
+#' @param config_path YAML config file name
 
 prepare_experiment_data = function(config_path) {
   config = read_yaml(config_path)

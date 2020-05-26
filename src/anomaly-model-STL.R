@@ -1,5 +1,10 @@
 source("anomaly-model-STL.R")
 
+#' Class representing STL model
+#' 
+#' @description
+#' Concrete class of abstract base class Model for STL anomaly detector.
+
 ModelSTL = R6::R6Class("ModelSTL",
   inherit = Model,
   public = 

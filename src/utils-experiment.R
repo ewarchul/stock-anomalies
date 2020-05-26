@@ -1,5 +1,13 @@
-#' [Tibble] -> String -> (Float -> Bool) -> [Tibble]
+#' Transform scores 
 #'
+#' @description
+#' function transforms real-value anomaly scores predicted by given model 
+#' to target label i.e. value from {FALSE, TRUE} using given policy. 
+#' For instance LOF model treats score much bigger than 1 (>> 1) as an anomaly.
+#' @param results list of data frames with experiment results [Tibble]
+#' @param scores name of variable which indicate scores in data frame [String]
+#' @param pred predicate function i.e function with given signature Float -> Boolean
+#' 
 #' @examples
 #' results %>% transform_scores("predictions", f.(x, x > 1.5))
 
@@ -11,6 +19,13 @@ transform_scores = function(results, scores, pred) {
   })
 }
 
+
+#' Compute ROC 
+#'
+#' @description
+#' function computes data necessary to plot ROC curve.
+#' @param experiment result
+
 get_ROC = function(result) { 
   roc_df = 
     result %>%
@@ -21,6 +36,15 @@ get_ROC = function(result) {
   )
 }
 
+#' Compute metrics
+#' 
+#' @description 
+#' function takes result of experiment and compute: 
+#'  - precision
+#'  - recall
+#'  - F-measure
+#' @param result data frame
+
 get_metrics = function(result) {
   err_data = 
     caret::confusionMatrix(factor(result$predictions), factor(result$truth))
@@ -30,6 +54,15 @@ get_metrics = function(result) {
     F_measure = 2 * ((precision * recall) / (precision + recall))
     )
 }
+
+#' Process experiment results
+#' 
+#' @description
+#' function takes list of experiment results [Tibble] and
+#' compute evaluation metrics
+#' @param results [Tibble]
+#' @return [Tibble]
+#' @seealso `get_metrics()`
 
 compute_metrics = function(results) {
   results %>% 
