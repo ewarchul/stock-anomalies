@@ -1,9 +1,21 @@
 source("anomaly-model.R")
 
+#' Class representing Isolation Forest model
+#' 
+#' @description
+#' Concrete class of abstract base class Model for iForest anomaly detector.
+
 ModelIsoForest = R6::R6Class("ModelIsoForest",
   inherit = Model,
   public = 
     list(
+
+         #' Isolation forest model constructor
+         #' 
+         #' @description
+         #' function creates iForest model as a partial function with given `params` list.
+         #' @param params named list of params
+
          initialize = function(params = NULL) {
           super$initialize("iForest")
           self$param_set$ntrees = controlParam(params, "ntrees", 500)
@@ -61,6 +73,15 @@ ModelIsoForest = R6::R6Class("ModelIsoForest",
               random_seed = self$param_set$random_seed
               )
          },
+
+         #' Construct isolation forest
+         #'
+         #' @description
+         #' function creates isolation forest on given data set.
+         #' @param data data frame
+         #' @param sample_size internal param of iForest
+         #' @param max_depth internal param of iForest
+
          train = function(data, sample_size = NULL, max_depth = NULL) {
            self$model_state =
              self$model_struct(
@@ -72,10 +93,24 @@ ModelIsoForest = R6::R6Class("ModelIsoForest",
                  )
 
           },
+          
+         #' Predict values
+         #'
+         #' @description
+         #' function assign anomaly scores for given data frame
+         #' and save result of prediction to `predict_state` field.
+         #' @param data data frame
+
          predict = function(data) {
           self$predict_state = 
             predict(self$model_state, data)
          },
+         
+         #' Print model
+         #' 
+         #' @description
+         #' function prints model to standard output
+
          print = function() {
            super$print()
          }

@@ -1,9 +1,21 @@
 source("anomaly-model.R")
 
+#' Class representing One Class SVM model
+#' 
+#' @description
+#' Concrete class of abstract base class Model for OC-SVM anomaly detector.
+
 ModelSVM = R6::R6Class("ModelSVM",
   inherit = Model,
   public = 
     list(
+
+         #' One Class SVM model constructor
+         #' 
+         #' @description
+         #' function creates OC-SVM model as a partial function with given `params` list
+         #' @param params named list of params
+
          initialize = function(params = NULL) {
           super$initialize("SVM")
              
@@ -30,6 +42,14 @@ ModelSVM = R6::R6Class("ModelSVM",
                 shrinking = self$param_set$shrinking
               )
          },
+      
+         #' Construct One Class SVM
+         #'
+         #' @description
+         #' function creates OC-SVM on given data set.
+         #' @param data data frame
+         #' @param ... internal params of SVM like kernel function
+
          train = function(data, ...) {
            self$model_state =
              self$model_struct(
@@ -42,10 +62,24 @@ ModelSVM = R6::R6Class("ModelSVM",
                  )
 
           },
+
+         #' Predict values
+         #'
+         #' @description
+         #' function assign anomaly scores for given data frame
+         #' and save result of prediction to `predict_state` field.
+         #' @param data data frame
+
          predict = function(data) {
           self$predict_state = 
             predict(self$model_state, data, probability = TRUE)
          },
+
+         #' Print model
+         #' 
+         #' @description
+         #' function prints model to standard output
+
         print = function() {
            super$print()
          }
