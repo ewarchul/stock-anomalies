@@ -1,4 +1,4 @@
-source("anomaly-model.R")
+source("../src/anomaly-model.R")
 
 #' Class representing Isolation Forest model
 #' 
