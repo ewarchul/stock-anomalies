@@ -15,12 +15,11 @@ ModelSVM = R6::R6Class("ModelSVM",
          #' @description
          #' function creates OC-SVM model as a partial function with given `params` list
          #' @param params named list of params
-
          initialize = function(params = NULL) {
           super$initialize("SVM")
              
             self$param_set$kernel = controlParam(params, "kernel", "linear")
-            self$param_set$scale = controlParam(params, "scale", 1)
+            self$param_set$scale = controlParam(params, "scale", TRUE)
             self$param_set$degree = controlParam(params, "degree", 3)
             self$param_set$gamma = controlParam(params, "gamma", 1) #default 1/data dimention 
             self$param_set$coef0 = controlParam(params, "coef0", 0)
@@ -53,10 +52,9 @@ ModelSVM = R6::R6Class("ModelSVM",
          train = function(data, ...) {
            self$model_state =
              self$model_struct(
-                    
-                    df = data,
+                    x = data,
                     type='one-classification',
-                    probability = TRUE,
+                    probability = FALSE,
                     na.action = na.omit,
                    ...
                  )
