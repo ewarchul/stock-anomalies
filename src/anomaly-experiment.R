@@ -16,6 +16,7 @@ library(furrr)
 #'  run_exp(list(ModelLOF$new(...), ModelSVM$new(...), task_1, "price")
 
 run_exp = function(models, task = NA, key) {
+  future::plan(multicore)
    task_data = task$df
    task_time = task$time_sequence %>% dplyr::pull()
    task_labels = task$targets %>% dplyr::pull()

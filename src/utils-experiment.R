@@ -1,3 +1,5 @@
+library(furrr)
+
 #' Transform scores 
 #'
 #' @description
@@ -12,10 +14,11 @@
 #' results %>% transform_scores("predictions", f.(x, x > 1.5))
 
 transform_scores = function(results, scores, pred) {
+  future::plan(multicore)
   results %>% 
-    purrr::map(function(result) {
+    furrr::future_map(function(result) {
       result %>%
-        dplyr::mutate(!!rlang::sym(scores) := pred(!!rlang::sym(scores)))
+        dplyr::mutate(!!paste0(rlang::sym(scores), "_bool") := pred(!!rlang::sym(scores)))
   })
 }
 
@@ -25,15 +28,12 @@ transform_scores = function(results, scores, pred) {
 #' @description
 #' function computes data necessary to plot ROC curve.
 #' @param experiment result
-#' @param predictions column name with predictions [String]
+#' @param score column name with real-valued scores [String]
 #' @param truth column name with true labels [String]
 
-get_ROC = function(result, predictions, truth) { 
-  predictions %<>% rlang::sym()
-  truth %<>% rlang::sym()
+get_ROC = function(result, score, truth) { 
   roc_df = 
-    result %>%
-      pROC::roc(!!truth, !!predictions)
+      pROC::roc(result[[truth]], result[[score]])
   tibble::tibble(
       sens = roc_df$sensitivities,
       spec = roc_df$specificities
@@ -48,10 +48,19 @@ get_ROC = function(result, predictions, truth) {
 #'  - recall
 #'  - F-measure
 #' @param result data frame
+#' @param predictions column name with Boolean predictions [String]
+#' @param truth column name with true labels [String]
 
-get_metrics = function(result) {
+
+get_metrics = function(result, predictions, truth) {
+  preds = 
+    result %>%
+      dplyr::pull(!!rlang::sym(predictions))
+  truths = 
+    result %>%
+      dplyr::pull(!!rlang::sym(truth))
   err_data = 
-    caret::confusionMatrix(factor(result$predictions), factor(result$truth))
+    caret::confusionMatrix(factor(preds, levels = c(TRUE, FALSE)), factor(truths, levels = c(TRUE, FALSE)))
   tibble::tibble(
     precision = err_data$byClass["Pos Pred Value"],
     recall = err_data$byClass["Sensitivity"],
@@ -66,20 +75,21 @@ get_metrics = function(result) {
 #' compute evaluation metrics
 #' @param results [Tibble]
 #' @param metric_func function with type Tibble -> Tibble where the lhs arg is result of experiment
-#' @return [Tibble]
+#' @return Tibble
 #' @seealso `get_metrics()`
 
 compute_metrics = function(results, metric_func, ...) {
+  future::plan(multicore)
   results %>% 
-    purrr::map(function(result) {
+    furrr::future_map_dfr(function(result) {
       exp_id = 
         result %>%
-        dplyr::select(id) %>%
-        dplyr::slice(1)
+        dplyr::pull(id) %>%
+        purrr::pluck(1)
       metrics = 
         result %>%
         metric_func(...) 
-      dplyr::bind_cols(exp_id, metrics)
-  }) %>%
-    purrr::reduce(bind_rows)
+      metrics %>%
+        dplyr::mutate(id = exp_id)
+  })
 }
