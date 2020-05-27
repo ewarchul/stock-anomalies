@@ -68,7 +68,7 @@ get_metrics = function(result) {
 #' @return [Tibble]
 #' @seealso `get_metrics()`
 
-compute_metrics = function(results) {
+compute_metrics = function(results, metric_func) {
   results %>% 
     purrr::map(function(result) {
       exp_id = 
@@ -77,7 +77,7 @@ compute_metrics = function(results) {
         dplyr::slice(1)
       metrics = 
         result %>%
-        get_metrics() 
+        metric_func() 
       dplyr::bind_cols(exp_id, metrics)
   })
 }
