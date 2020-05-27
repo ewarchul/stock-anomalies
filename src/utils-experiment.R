@@ -80,5 +80,6 @@ compute_metrics = function(results, metric_func, ...) {
         result %>%
         metric_func(...) 
       dplyr::bind_cols(exp_id, metrics)
-  })
+  }) %>%
+    purrr::reduce(bind_rows)
 }
