@@ -65,6 +65,7 @@ get_metrics = function(result) {
 #' function takes list of experiment results [Tibble] and
 #' compute evaluation metrics
 #' @param results [Tibble]
+#' @param metric_func function with type Tibble -> Tibble where the lhs arg is result of experiment
 #' @return [Tibble]
 #' @seealso `get_metrics()`
 
