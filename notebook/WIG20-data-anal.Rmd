@@ -2,35 +2,65 @@
 title: "WIG20-data-anal"
 output: html_document
 ---
+library(ggpubr)
+library(fpp2)
+library(pastecs)
+library(pracma)
 
-# WoW Token
+source("../src/anomaly-task.R")
+source("../src/anomaly-model-LOF.R")
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+source("../src/utils-task.R")
+
+# WIG20
+
+config_path = "../data/natural_anomalies_wow.yml"
+wig_data = prepare_experiment_data(config_path)
 
 ## Ogólna charakterystyka danych 
-
+wig_data %>%
+  head
 ### Typ, ilość, wartości brakujące w danych
-
+wig_data %>% 
+  summarise(count = sum(is.na(wow_data)))
+  
+wig_data %>%
+  nrow()
+  
 ### Liczba anomalii prawdziwych 
-
-### Liczba anomalii imputowanych
+wig_data%>%
+  filter(label == "TRUE") 
+  
+wig_data%>%
+  filter(label == "TRUE") %>%
+  nrow()
 
 ## Rozkład danych
-
+wig_data %>%
+  summarize(minimum = min(price), srednia = mean(price), maksimum = max(price), odchylenie = sd(price))
 ### Miary rozkładu
+ggqqplot(wig_data, x="price") + theme_bw()
 
 ### Normalność rozkładu
 
 ## Charakterystyka szeregu
+ggplot(wig_data, aes(x=price)) + geom_histogram(bins = 100) + theme_bw()
 
+ggplot(wig_data, aes(x=price)) + geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=2) + theme_bw()
 ### Przebieg danych
 
 ### Sezonowość
+ wig_ts_result = wig_data %>% time_decompose(price, method = "stl", frequency = "auto", trend = "auto")
 
 ### Trend
 
 ### Okresowość 
 
 ### Indeks Hurst'a
-
+ hurstexp(wig_data$price)
+ 
 ### Autokorelacja
 
 ### Statystyki w oknach 

@@ -15,8 +15,10 @@ source("../src/data-visualization.R")
 source("../src/utils-task.R")
 
 # WoW Token
-config_path = "../data/experiment.yml"
+config_path = "../data/natural_anomalies_wow.yml"
 wow_data = prepare_experiment_data(config_path)
+anomalies = c(177, 276, 479, 1082, 1766, 1257, 1348, 1917, 2058)
+wow_data[anomalies, 4] = TRUE
 
 ## Ogólna charakterystyka danych 
 wow_data %>%
@@ -43,7 +45,7 @@ wow_data %>%
   summarize(minimum = min(price), srednia = mean(price), maksimum = max(price), odchylenie = sd(price))
   
 ### Normalność rozkładu
-chisq.test(wow_data$price)
+
 
 ggqqplot(wow_data, x="price") + theme_bw() 
 ## Charakterystyka szeregu
@@ -70,11 +72,18 @@ hurstexp(wow_data$price)
 
 ### Autokorelacja
 acf(wow_data$price)
+ cor<- cor.test(wow_data$price, wow_data$price,  method = "spearman")
+
 
 ### Statystyki w oknach 
-k = 50
+k = 5
+
+ma3 <- rollmeanr(wow_data$price,3,fill=NA)
+
 wow_data_lag = add_lag(wow_data, "price", k)
 selected = wow_data_lag[,c(1, 5:ncol(wow_data_lag))]
+
+
 window = tibble(time = wow_data_lag$time,
     means = apply(selected, 1, mean),
     min = apply(selected, 1, min),
