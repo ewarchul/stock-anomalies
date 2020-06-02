@@ -2,35 +2,91 @@
 title: "WoW-Token-data-anal"
 output: html_document
 ---
+library(ggpubr)
+library(fpp2)
+library(pastecs)
+library(pracma)
+
+source("../src/anomaly-task.R")
+source("../src/anomaly-model-LOF.R")
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+source("../src/utils-task.R")
 
 # WoW Token
+config_path = "../data/natural_anomalies_wow.yml"
+wow_data = prepare_experiment_data(config_path)
+anomalies = c(177, 276, 479, 1082, 1766, 1257, 1348, 1917, 2058)
+wow_data[anomalies, 4] = TRUE
 
 ## Ogólna charakterystyka danych 
-
+wow_data %>%
+  head
+  
 ### Typ, ilość, wartości brakujące w danych
-
-### Liczba anomalii prawdziwych 
-
+wow_data %>% 
+  summarise(count = sum(is.na(wow_data)))
+  
+wow_data %>%
+  nrow()
+  
 ### Liczba anomalii imputowanych
-
+wow_data%>%
+  filter(label == "TRUE") 
+  
+wow_data%>%
+  filter(label == "TRUE") %>%
+  nrow()
+  
 ## Rozkład danych
-
 ### Miary rozkładu
-
+wow_data %>%
+  summarize(minimum = min(price), srednia = mean(price), maksimum = max(price), odchylenie = sd(price))
+  
 ### Normalność rozkładu
 
+
+ggqqplot(wow_data, x="price") + theme_bw() 
 ## Charakterystyka szeregu
+ggplot(wow_data, aes(x=price)) + geom_histogram(bins = 100) + theme_bw()
+
+ggplot(wow_data, aes(x=price)) + geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=2) + theme_bw()
 
 ### Przebieg danych
+ggplot(wow_data, aes(x = time, y = price, group = region)) + geom_line(aes(color = region)) + theme_bw()
+wow_data %>% plot_ts()
 
 ### Sezonowość
-
+<!-- decomposedRes <- decompose(wow_data$price, type="additive") # use type = "additive" for additive components -->
+<!-- plot (decomposedRes) # see plot below -->
+<!-- stlRes <- stl(wow_data$price, s.window = "periodic") -->
 ### Trend
+trend.test(wow_data)
 
 ### Okresowość 
+stats::spectrum(wow_data$price)
 
 ### Indeks Hurst'a
+hurstexp(wow_data$price)
 
 ### Autokorelacja
+acf(wow_data$price)
+ cor<- cor.test(wow_data$price, wow_data$price,  method = "spearman")
+
 
 ### Statystyki w oknach 
+k = 5
+
+ma3 <- rollmeanr(wow_data$price,3,fill=NA)
+
+wow_data_lag = add_lag(wow_data, "price", k)
+selected = wow_data_lag[,c(1, 5:ncol(wow_data_lag))]
+
+
+window = tibble(time = wow_data_lag$time,
+    means = apply(selected, 1, mean),
+    min = apply(selected, 1, min),
+    max = apply(selected, 1, max),
+    sd = apply(selected, 1, sd))
+ 

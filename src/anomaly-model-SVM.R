@@ -1,4 +1,3 @@
-source("anomaly-model.R")
 
 #' Class representing One Class SVM model
 #' 
