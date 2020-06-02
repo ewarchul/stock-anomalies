@@ -1,6 +1,26 @@
 \section{Analiza danych}
 \label{section:analiza}
 
+Sekcja ta poświęcona jest analizie danych. Opis oraz krótka charakterystyka danych, których używaliśmy w projekcie znajduje się w dokumentacji wstępnej \cite{Dzienisz}. 
+
+W ramach przeprowadzonej analizy skupiliśmy się na następujących zagadnieniach:
+
+\begin{itemize}
+
+  \item zbadaliśmy rozkład stosowanych danych. Zastosowane przez nas modele w dużej mierze były wolne od założeń odnośnie rozkładu danych (ang. distribution free), ale znajomość
+  rozkładu stanowi istotną wartość dodaną analizy. Dzięki niej byliśmy w stanie ocenić częstość występowania anomalii odległych od wartości modalnej rozkładu. 
+  \item analiza rozkładu została również roszerzona o miary rozkładu jak mediana, kurtoza czy skośność. 
+  \item w związku z faktem, że analizowane dane stanowią szereg czasowy istotne było zbadanie autokorelacji. Na jej podstawie uzskaliśmy pewne pojęcie o sezonowności
+  analizowanych szeregów.
+  \item wykorzystaliśmy również wykładnik Hurst'a jako uzupełnienie analizy autokorelacji szeregu czasowego. Wykładnik ten jest definiowany w następujący sposób:
+    \begin{equation}
+        \mathcal{H}(t) = \mathcal{E}\frac{R(t)}{S(t)}
+    \end{equation}
+    prz czym $R(t)$ reprezentuje odchylenie od średniej $t$ początkowych wartości szeregów, a $S(t)$ jest ich odchyleniem standardowym. 
+    Jeśli wartości $\mathcal{H}$ znajdują się w zbiorze $(0.5, 1)$, to spodziewać się można, że duże wartości szeregu czasowego nie będą pojawiały sie w odosobnieniu. Innymi słowy, 
+    pojawienie się dużych wartości szeregu czasowego będzie związane z przesunięciem średniej w większym oknie czasowym.
+\end{itemize}
+
 \subsection{Imputacja anomalii}
 \label{subsection:imputacja}
 
