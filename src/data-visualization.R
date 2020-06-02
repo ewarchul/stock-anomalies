@@ -66,3 +66,7 @@ plot_ts = function(data, start_date = NA, end_date = NA,
   base_plot
 }
 
+
+plot_measures = function(data) { 
+  data
+}
