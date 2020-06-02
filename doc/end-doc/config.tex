@@ -1,0 +1,57 @@
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass{article}
+\usepackage{polski}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{color}
+\usepackage{amsmath}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{url}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=violet,
+    filecolor=magenta,      
+    citecolor=blue,
+    urlcolor=cyan,
+}
+\usepackage{graphicx}
+\usepackage{mathtools}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\newcommand{\wek}[1]{
+	{\bf{#1}} 
+}
+\newcommand{\jed}[1]{
+	{$\left[#1\right]$}
+}
+\newcommand{\mat}[1]{
+	{\bf #1} 
+}
+\newcommand{\todo}[1]{
+	\colorbox{yellow} {{\color{red}
+	\emph {TODO: #1}
+}}}
+\newcommand{\srednia}[1]{
+	\langle #1 \rangle 
+}
+
