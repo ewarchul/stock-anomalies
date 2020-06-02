@@ -1,7 +1,7 @@
 experiment_point_anomalies:
  data_source: "wow"
  data_path: "../data/wow-data.json"
- point_anomalies_amount: 10
+ point_anomalies_amount: 0
  interval_anomaly_length: 10
  interval_anomaly_amount: 5
  amplitude: 0.1

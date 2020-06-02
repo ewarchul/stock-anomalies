@@ -2,50 +2,52 @@
 title: "STL-anal"
 output: html_document
 ---
+```{r}
 
-# STL
+library(here)
+library(anomalize)
+source("../src/data-preparation.R")
+source("../src/data-generation.R")
+source("../src/data-visualization.R")
+source("../src/utils-task.R")
+source("../src/anomaly-model-iForest.R")
+source("../src/anomaly-experiment.R")
+source("../src/utils-experiment.R")
 
-## Opis działania modelu 
+```
 
-## Wykrycie anomalii rzeczywistych (eksperyment nr 1)
 
-### Opis eksperymentu 
+```{r}
+config_path = "../data/natural_anomalies_wow.yml"
+wow_data = prepare_experiment_data(config_path)
+anomalies = c(177, 276, 479, 1082, 1766, 1257, 1348, 1917, 2058)
+wow_data[anomalies, 4] = TRUE
 
-### Parametry modelu i eksperymentu
+plot_ts(wow_data)
+wow_data %>% head
 
-### Wyniki eksperymentu
+wow_ts = ts(wow_data$price, frequency = 216)
+wow_ts_result = wow_data %>% 
+  time_decompose(time, method = "stl", frequency = "auto", trend = "auto")
 
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
+```
 
-## Czułość modelu na anomalie punktowe (liczba anomalii i amplituda)
+```{r}
+s.window_vals = c(51, 101, 151, 217, 251)
+inner_vals=c(1, 2, 3, 4, 5)
+outer_vals = c(0, 5, 10, 15, 20)
 
-### Opis eksperymentu
+for (s.window in s.window_vals){
 
-### Parametry modelu i eksperymentu
-
-### Wyniki eksperymentu
-
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
-
-## Czułość modelu na anomalie przedziałowe (długość przedzialu i amplituda)
-
-### Opis eksperymentu
-
-### Parametry modelu i eksperymentu
-
-### Wyniki eksperymentu
-
-- celność
-- odzysk
-- F-miara
-- krzywa ROC
-- określenie najlepszego modelu / ranking
-
+  decomposed = stl(wow_ts, s.window = 217)
+  plot(decomposed)
+  res = tibble(predictions =as.numeric( decomposed$time.series[,3]))
+  wow_ts_result$remainder = res$predictions
+  
+  anomalies = wow_ts_result %>%
+    anomalize(remainder, method = "gesd", alpha = 0.05, max_anoms = 0.2) 
+  anomalies %>%
+    plot_anomaly_decomposition()
+  
+}
+```

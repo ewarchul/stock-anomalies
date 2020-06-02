@@ -44,14 +44,16 @@ prepare_experiment_data = function(config_path) {
     prep_func(config$experiment_point_anomalies$data_path) %>%
     generate_df(key = time)
 
-  anomalie_number = config$experiment_point_anomalies$point_anomalies_number
+  anomalie_number = config$experiment_point_anomalies$point_anomalies_amount
   anomalie_length = config$experiment_point_anomalies$interval_anomaly_length
-  anomalie_size = ifelse(config$experiment_point_anomalies$amplitude == "small", 0.2, 0.8)  
+  interval_anomalie_number = config$experiment_point_anomalies$interval_anomaly_amount
+  
+  anomalie_size = config$experiment_point_anomalies$amplitude  
   
   if (anomalie_length > 0) {
       data %>% 
         impute_randomPointAnomaly(col = "price", n = anomalie_number, st_coeff = anomalie_size) %>%
-        impute_randomIntervalAnomaly(col = "price", length = anomalie_length, st_coeff = anomalie_size)
+        impute_randomIntervalsAnomaly(col = "price", n = interval_anomalie_number, length = anomalie_length, st_coeff = anomalie_size)
   } else {
       data %>% 
         impute_randomPointAnomaly(col = "price", n = anomalie_number, st_coeff = anomalie_size) 
