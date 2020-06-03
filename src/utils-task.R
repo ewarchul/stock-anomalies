@@ -19,13 +19,15 @@ add_lag = function(data, key, win_size) {
         data %>%
           dplyr::transmute(
                         !!rlang::sym(paste(key, "lag", lag, sep = "_")) := dplyr::lag(!!rlang::sym(key), lag, default = first(!!rlang::sym(key))) 
-                        )
+                        ) 
+          
       }) %>%
       purrr::reduce(dplyr::bind_cols)
     dplyr::bind_cols(data, lags)
   } else 
       data
 }
+
 
 #' Map config to data frame 
 #'

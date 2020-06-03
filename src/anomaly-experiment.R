@@ -6,9 +6,9 @@ library(furrr)
 #'
 #' @description 
 #' Function evaluate list of models [AnomalyModel] on given task [Task].
-#' @param models list of models [AnomalyModel]
-#' @param task AnomalyModel type instance
-#' @param key name of variable representing data in TS
+#' @param models list of models :: [AnomalyModel]
+#' @param task AnomalyModel type instance :: AnomalyModel
+#' @param key name of variable representing data in TS :: String
 #'
 #' @return list of data frames
 #' @examples

@@ -74,18 +74,25 @@ generate_intervalAnomalies = function(data, col, index, length, st_coeff) {
 #' Impute point anomalies into TS
 #'
 #' @description function puts point anomalies into data frame with TS
-#' @param col column with value of time serie
-#' @param n amount of anomalies
-#' @param st_coeff control coefficient 
+#' @param col column with value of time serie :: String
+#' @param n amount of anomalies :: Int
+#' @param st_coeff control coefficient :: Float
 
-impute_randomPointAnomaly = function(data, col, n, st_coeff = 0.5) {
-  indices = 
-    sample(1:nrow(data), n)
+impute_randomPointAnomaly = function(data, col, n, st_coeff = 0.5, window_size = 5) {
+  indices_value = 
+    sample(1:nrow(data), n) 
+  indices_label = 
+    indices_value %>%
+    purrr::map(function(x) {
+                 x + 0:window_size
+    }) %>%
+    unlist() %>%
+    purrr::discard(~ .x > nrow(data))
   anomalies = 
     data %>%
-      generate_pointAnomalies(col, indices, n, st_coeff)
-  data[[col]][indices] = anomalies
-  data[["label"]][indices] = TRUE
+      generate_pointAnomalies(col, indices_value, n, st_coeff)
+  data[[col]][indices_value] = anomalies
+  data[["label"]][indices_label] = TRUE
   data
 }
 

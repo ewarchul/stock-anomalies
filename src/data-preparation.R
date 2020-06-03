@@ -100,10 +100,12 @@ generate_df = function(dfx, key, pred = NA) {
     rlang::enquo(key)
   if (is.na(pred))
     dfx %>% 
-      dplyr::mutate(label = FALSE)
+      dplyr::mutate(label = FALSE) %>%
+      dplyr::select(-region)
   else 
     dfx %>%
-      dplyr::mutate(label = dplyr::if_else(pred(!!key), TRUE, FALSE))
+      dplyr::mutate(label = dplyr::if_else(pred(!!key), TRUE, FALSE)) %>%
+      dplyr::select(-region)
 }
 
 
